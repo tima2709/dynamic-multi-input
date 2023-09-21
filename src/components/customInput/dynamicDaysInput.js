@@ -3,7 +3,7 @@ import axios from "axios";
 
 const DynamicDaysInput = () => {
     const [tourImages, setTourImages] = useState([])
-    const [daysImages, setDaysImages] = useState([])
+    // const [daysImages, setDaysImages] = useState([])
     const [hotelImages, setHotelImages] = useState([])
     const [tourDays, setTourDays] = useState([{...days}])
 
@@ -65,7 +65,9 @@ const DynamicDaysInput = () => {
         for (let i = 0; i < tourDays.length; i++) {
             myFormData.append(`days[${i}]title_days`, tourDays[i]?.daysTitle);
             myFormData.append(`days[${i}]description_days`, tourDays[i]?.daysDescription);
-            myFormData.append(`days[${i}]days_images[${i}]image`, tourDays[i].daysImages[0]);
+            for (let j = 0; j < 3; j++) {
+                myFormData.append(`days[${i}]days_images[${j}]image`, tourDays[i].daysImages[j]);
+            }
         }
 
         myFormData.append("accommodations[0]title_accommodation", dat.accommodationTitle)
