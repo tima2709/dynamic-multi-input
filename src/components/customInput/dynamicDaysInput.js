@@ -7,14 +7,14 @@ const DynamicDaysInput = () => {
     const [hotelImages, setHotelImages] = useState([])
     const [tourDays, setTourDays] = useState([{...days}])
 
-    console.log(tourDays, 'tourDays')
+    // console.log(tourDays, 'tourDays')
 
 
     function addFieldDays() {
         if (tourDays.length) {
             const added = [...tourDays]
-            const data = {...days}
-            added.push(data)
+            const dynamicInput = {...days}
+            added.push(dynamicInput)
             setTourDays(added)
         }
     }
@@ -40,12 +40,12 @@ const DynamicDaysInput = () => {
 
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const data = new FormData(e.target);
-        console.log(data, 'data')
+        // console.log(data, 'data')
         let dat = Object.fromEntries(data.entries());
-        console.log(dat, 'dat')
+        // console.log(dat, 'dat')
         const myFormData = new FormData();
 
         myFormData.append("title_tour", dat.tourTitle);
@@ -65,10 +65,12 @@ const DynamicDaysInput = () => {
         for (let i = 0; i < tourDays.length; i++) {
             myFormData.append(`days[${i}]title_days`, tourDays[i]?.daysTitle);
             myFormData.append(`days[${i}]description_days`, tourDays[i]?.daysDescription);
-            for (let j = 0; j < 3; j++) {
+            console.log(tourDays[i].daysImages.length, 'len')
+            for (let j = 0; j < tourDays[i].daysImages.length; j++) {
                 myFormData.append(`days[${i}]days_images[${j}]image`, tourDays[i].daysImages[j]);
             }
         }
+
 
         myFormData.append("accommodations[0]title_accommodation", dat.accommodationTitle)
         myFormData.append("accommodations[0]description_accommodation", dat.accommodationDescription)
@@ -82,7 +84,7 @@ const DynamicDaysInput = () => {
             myFormData.append(`accommodations[0]hotels[0]hotel_images[${i}]image`, hotelImages[i])
         }
 
-        axios({
+        await axios({
             method: "post",
             url: "http://16.16.201.16/tour_create/",
             data: myFormData,
@@ -124,7 +126,7 @@ const DynamicDaysInput = () => {
                         <h1>Days</h1>
                         {
                             tourDays.map((item, index) => (
-                                <div key={item.id}>
+                                <div key={index}>
                                     <input
                                         type="text"
                                         name={'daysTitle'}
@@ -179,25 +181,28 @@ const DynamicDaysInput = () => {
                             <option value="Hotel">Hotel</option>
                             <option value="Cottage">Cottage</option>
                         </select>
-                        <input
-                            type="text"
-                            name={'hotelTitle'}
-                            placeholder={'title_hotel'}
+                        <div>
+                            <h1>hotel</h1>
+                            <input
+                                type="text"
+                                name={'hotelTitle'}
+                                placeholder={'title_hotel'}
 
-                        />
-                        <input
-                            type="text"
-                            name={'hotelDescription'}
-                            placeholder={'description_hotel'}
+                            />
+                            <input
+                                type="text"
+                                name={'hotelDescription'}
+                                placeholder={'description_hotel'}
 
-                        />
-                        <input
-                            type="file"
-                            accept={'image/*, .png, .jpg, .gif, .web,'}
-                            multiple={true}
-                            onChange={(e) => setHotelImages(e.target.files)}
-                            placeholder={'hotel images'}
-                        />
+                            />
+                            <input
+                                type="file"
+                                accept={'image/*, .png, .jpg, .gif, .web,'}
+                                multiple={true}
+                                onChange={(e) => setHotelImages(e.target.files)}
+                                placeholder={'hotel images'}
+                            />
+                        </div>
                     </div>
 
                     <button
