@@ -3,49 +3,85 @@ import axios from "axios";
 
 const DynamicDaysInput = () => {
     const [tourImages, setTourImages] = useState([])
-    // const [daysImages, setDaysImages] = useState([])
-    const [hotelImages, setHotelImages] = useState([])
     const [tourDays, setTourDays] = useState([{...days}])
-
-    // console.log(tourDays, 'tourDays')
-
+    const [tourHotels, setTourHotels] = useState([{...hotels}])
+    const [importantInfo, setImportantInfo] = useState([{...importantInformation}])
 
     function addFieldDays() {
-        if (tourDays.length) {
-            const added = [...tourDays]
-            const dynamicInput = {...days}
-            added.push(dynamicInput)
-            setTourDays(added)
-        }
+        const added = [...tourDays]
+        const dynamicInput = {...days}
+        added.push(dynamicInput)
+        setTourDays(added)
+        // setTourDays([...tourDays, days])
     }
 
-    function handleChangeTitle(event, index) {
+    function handleChangeDayTitle(event, index) {
         const valueNew = [...tourDays]
         valueNew[index].daysTitle = event
         setTourDays(valueNew)
     }
 
-    function handleChangeDesc(event, index) {
+    function handleChangeDayDesc(event, index) {
         const valueNew = [...tourDays]
         valueNew[index].daysDescription = event
         setTourDays(valueNew)
     }
 
-    function handleChangeImages(event, index) {
+    function handleChangeDayImages(event, index) {
         const valueNew = [...tourDays]
         valueNew[index].daysImages = event
         setTourDays(valueNew)
     }
 
+    function addFieldHotel() {
+        const addedHotel = [...tourHotels]
+        const dynamicInputHotel = {...hotels}
+        addedHotel.push(dynamicInputHotel)
+        setTourHotels(addedHotel)
+    }
 
+    function handleChangeHotelTitle(event, index) {
+        const newHotelValue = [...tourHotels]
+        newHotelValue[index].hotelTitle = event
+        setTourHotels(newHotelValue)
+    }
+
+    function handleChangeHotelDesc(event, index) {
+        const newHotelValue = [...tourHotels]
+        newHotelValue[index].hotelDescription = event
+        setTourHotels(newHotelValue)
+    }
+
+    function handleChangeHotelImages(event, index) {
+        const newHotelValue = [...tourHotels]
+        newHotelValue[index].hotelImages = event
+        setTourHotels(newHotelValue)
+    }
+
+    function addFieldImportantInfo() {
+        const added = [...importantInfo]
+        const dynamic = {...importantInformation}
+        added.push(dynamic)
+        setImportantInfo(added)
+    }
+
+    function importantInfoTitle(event, index) {
+        const newHotelValue = [...importantInfo]
+        newHotelValue[index].title_important_information = event
+        setImportantInfo(newHotelValue)
+    }
+
+    function importantInfoDesc(event, index) {
+        const newHotelValue = [...importantInfo]
+        newHotelValue[index].description_important_information = event
+        setImportantInfo(newHotelValue)
+    }
 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         const data = new FormData(e.target);
-        // console.log(data, 'data')
         let dat = Object.fromEntries(data.entries());
-        // console.log(dat, 'dat')
         const myFormData = new FormData();
 
         myFormData.append("title_tour", dat.tourTitle);
@@ -55,48 +91,47 @@ const DynamicDaysInput = () => {
             myFormData.append(`tour_images[${i}]image`, tourImages[i])
         }
 
-        // myFormData.append("days[0]title_days", dat.daysTitle)
-        // myFormData.append("days[0]description_days", dat.daysDescription)
-        //
-        // for (let i = 0; i < daysImages.length; i++) {
-        //     myFormData.append(`days[0]days_images[${i}]image`, daysImages[i])
-        // }
-
         for (let i = 0; i < tourDays.length; i++) {
             myFormData.append(`days[${i}]title_days`, tourDays[i]?.daysTitle);
             myFormData.append(`days[${i}]description_days`, tourDays[i]?.daysDescription);
-            console.log(tourDays[i].daysImages.length, 'len')
             for (let j = 0; j < tourDays[i].daysImages.length; j++) {
                 myFormData.append(`days[${i}]days_images[${j}]image`, tourDays[i].daysImages[j]);
             }
         }
 
-
         myFormData.append("accommodations[0]title_accommodation", dat.accommodationTitle)
         myFormData.append("accommodations[0]description_accommodation", dat.accommodationDescription)
         myFormData.append("accommodations[0]comfort", dat.comfort)
         myFormData.append("accommodations[0]type", dat.type)
-        myFormData.append("accommodations[0]hotels[0]title_hotel", dat.hotelTitle)
-        myFormData.append("accommodations[0]hotels[0]description_hotel", dat.hotelDescription)
 
+        for (let i = 0; i < tourHotels.length; i++) {
+            myFormData.append(`accommodations[0]hotels[${i}]title_hotel`, tourHotels[i]?.hotelTitle)
+            myFormData.append(`accommodations[0]hotels[${i}]description_hotel`, tourHotels[i]?.hotelDescription)
+            for (let j = 0; j < tourHotels[i].hotelImages.length; j++) {
+                console.log(tourHotels[i].hotelImages.length, 'len')
+                myFormData.append(`accommodations[0]hotels[${i}]hotel_images[${j}]image`, tourHotels[i]?.hotelImages[j]);
+            }
+        }
 
-        for (let i = 0; i < hotelImages.length; i++) {
-            myFormData.append(`accommodations[0]hotels[0]hotel_images[${i}]image`, hotelImages[i])
+        for (let i = 0; i < importantInfo.length; i++) {
+            myFormData.append(`important_informations[${i}]title_important_information`, importantInfo[i].title_important_information)
+            myFormData.append(`important_informations[${i}]description_important_information`, importantInfo[i].description_important_information)
         }
 
         await axios({
             method: "post",
-            url: "http://16.16.201.16/tour_create/",
+            url: "http://16.16.207.87/tour_create/" +
+                "",
             data: myFormData,
             headers: {
                 'Content-Type': `multipart/form-data; `
             }
         }).then(function (response) {
             //handle success
-            console.log(response);
+            console.log(response, 'res');
         }).catch(function (response) {
             //handle error
-            console.log(response);
+            console.log(response, 'err');
         });
     }
 
@@ -132,26 +167,26 @@ const DynamicDaysInput = () => {
                                         name={'daysTitle'}
                                         placeholder={'title days'}
                                         value={item.daysTitle}
-                                        onChange={(e) => handleChangeTitle(e.target.value, index)}
+                                        onChange={(e) => handleChangeDayTitle(e.target.value, index)}
                                     />
                                     <input
                                         type="text"
                                         name={'daysDescription'}
                                         placeholder={'description days'}
                                         value={item.daysDescription}
-                                        onChange={(e) => handleChangeDesc(e.target.value, index)}
+                                        onChange={(e) => handleChangeDayDesc(e.target.value, index)}
                                     />
                                     <input
                                         accept={'image/*, .png, .jpg, .gif, .web,'}
                                         type='file'
                                         multiple={true}
-                                        onChange={(e) => handleChangeImages(e.target.files, index)}
+                                        onChange={(e) => handleChangeDayImages(e.target.files, index)}
                                         placeholder={'day image'}
                                     />
                                 </div>
                             ))
                         }
-                        <button onClick={addFieldDays}>dobavit den</button>
+                        <button onClick={addFieldDays} type={'button'}>Добавить день</button>
                     </div>
                     <div>
                         <h1>accommodations</h1>
@@ -165,10 +200,9 @@ const DynamicDaysInput = () => {
                             type="text"
                             name={'accommodationDescription'}
                             placeholder={'description_accommodation'}
-
                         />
 
-                        <select name="comfort" >
+                        <select name="comfort">
                             <option value="Base">Base</option>
                             <option value="Simple">Simple</option>
                             <option value="Medium">Medium</option>
@@ -183,34 +217,61 @@ const DynamicDaysInput = () => {
                         </select>
                         <div>
                             <h1>hotel</h1>
-                            <input
-                                type="text"
-                                name={'hotelTitle'}
-                                placeholder={'title_hotel'}
-
-                            />
-                            <input
-                                type="text"
-                                name={'hotelDescription'}
-                                placeholder={'description_hotel'}
-
-                            />
-                            <input
-                                type="file"
-                                accept={'image/*, .png, .jpg, .gif, .web,'}
-                                multiple={true}
-                                onChange={(e) => setHotelImages(e.target.files)}
-                                placeholder={'hotel images'}
-                            />
+                            {
+                                tourHotels.map((item, index) => (
+                                    <div key={index}>
+                                        <input
+                                            type="text"
+                                            name={'hotelTitle'}
+                                            placeholder={'title_hotel'}
+                                            value={item.hotelTitle}
+                                            onChange={(e) => handleChangeHotelTitle(e.target.value, index)}
+                                        />
+                                        <input
+                                            type="text"
+                                            name={'hotelDescription'}
+                                            placeholder={'description_hotel'}
+                                            value={item.hotelDescription}
+                                            onChange={(e) => handleChangeHotelDesc(e.target.value, index)}
+                                        />
+                                        <input
+                                            type="file"
+                                            accept={'image/*, .png, .jpg, .gif, .web,'}
+                                            multiple={true}
+                                            onChange={(e) => handleChangeHotelImages(e.target.files, index)}
+                                            placeholder={'hotel images'}
+                                        />
+                                    </div>
+                                ))
+                            }
+                            <button onClick={addFieldHotel} type={'button'}>Добавить проживание</button>
+                        </div>
+                        <div>
+                            <h1>important information</h1>
+                            {
+                                importantInfo.map((item, index) => (
+                                    <div key={index}>
+                                        <input
+                                            type="text"
+                                            placeholder={'title important information'}
+                                            name={'title_important_information'}
+                                            value={item.title_important_information}
+                                            onChange={(e) => importantInfoTitle(e.target.value, index)}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder={'description important information'}
+                                            name={'description_important_information'}
+                                            value={item.description_important_information}
+                                            onChange={(e) => importantInfoDesc(e.target.value, index)}
+                                        />
+                                    </div>
+                                ))
+                            }
+                            <button type={'button'} onClick={addFieldImportantInfo}>добавть инфо</button>
                         </div>
                     </div>
-
-                    <button
-                        type={'submit'}
-                        // onClick={handleSubmit}
-                    >
-                        add
-                    </button>
+                    <button type={'submit'}>Создать тур</button>
                 </form>
             </div>
         </div>
@@ -224,3 +285,15 @@ export const days = {
     daysDescription: '',
     daysImages: []
 };
+
+export const hotels = {
+    hotelTitle: '',
+    hotelDescription: '',
+    hotelImages: []
+};
+
+export const importantInformation = {
+    title_important_information: '',
+    description_important_information: ''
+}
+
